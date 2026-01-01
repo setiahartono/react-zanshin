@@ -3,14 +3,21 @@ import './css/SearchBox.css'
 
 type Props = {
   distance: number
-  onDistanceChange: (value: number) => 0
-  onSearch: (query: string) => void
+  onDistanceChange: (value: number) => void
+  onSearch: (query: string, distance: number) => void
   isLoading: boolean
 }
 
 export default function SearchBox({
-  distance, onDistanceChange, onSearch, isLoading
+  distance,
+  onDistanceChange,
+  onSearch,
+  isLoading
 }: Props) {
+  const handleSearch = (query: string) => {
+    onSearch(query, distance)
+  }
+
   const {
     inputValue,
     suggestions,
@@ -18,7 +25,7 @@ export default function SearchBox({
     handleInputChange,
     handleSuggestionClick,
     handleKeyPress
-  } = useSearchAutocomplete(onSearch)
+  } = useSearchAutocomplete(handleSearch)
 
   return (
     <div className="searchContainer">
@@ -52,11 +59,10 @@ export default function SearchBox({
           value={distance}
           min={1}
           max={20}
-          onChange={e => onDistanceChange(+e.target.value)}
+          onChange={(e) => onDistanceChange(+e.target.value)}
           disabled={isLoading}
           className="distanceInput"
         />
-        <span> KM</span>
       </div>
     </div>
   )

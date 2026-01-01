@@ -10,10 +10,20 @@ type Props = {
   isLoading: boolean
 }
 
-export default function MapView({ dojos, onLocationSelect, searchLocation, isLoading }: Props) {
+export default function MapView({
+  dojos,
+  onLocationSelect,
+  searchLocation,
+  isLoading
+}: Props) {
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<L.Marker[]>([])
   const userMarkerRef = useRef<L.Marker | null>(null)
+
+  const onLocationSelectRef = useRef(onLocationSelect)
+  useEffect(() => {
+    onLocationSelectRef.current = onLocationSelect
+  }, [onLocationSelect])
 
   // Initialize map ONCE
   useEffect(() => {
@@ -43,26 +53,28 @@ export default function MapView({ dojos, onLocationSelect, searchLocation, isLoa
       if (isLoading) return
 
       const { lat, lng } = e.latlng
-      onLocationSelect(lat, lng)
+
+      // ✅ use the ref to get the latest distance-aware callback
+      onLocationSelectRef.current(lat, lng)
 
       if (userMarkerRef.current) {
         userMarkerRef.current.remove()
       }
 
-      userMarkerRef.current = L.marker([lat, lng]).addTo(map)
+      userMarkerRef.current = L.marker([lat, lng])
+        .addTo(map)
         .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
         .openPopup()
     })
-  }, [])
+  }, [isLoading])
 
-  // Update dojo markers
   useEffect(() => {
     if (!mapRef.current) return
 
-    markersRef.current.forEach(m => m.remove())
+    markersRef.current.forEach((m) => m.remove())
     markersRef.current = []
 
-    dojos.forEach(dojo => {
+    dojos.forEach((dojo) => {
       const marker = L.marker([dojo.lat, dojo.lng])
         .addTo(mapRef.current!)
         .bindPopup(`<b>${dojo.title}</b>`)
@@ -90,18 +102,16 @@ export default function MapView({ dojos, onLocationSelect, searchLocation, isLoa
   // Update popup when loading state changes
   useEffect(() => {
     if (userMarkerRef.current) {
-      userMarkerRef.current.setPopupContent(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
+      userMarkerRef.current.setPopupContent(
+        isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
+      )
     }
   }, [isLoading])
 
   return (
     <div className="mapContainer">
       <div id="map" className="mapElement" />
-      {isLoading && (
-        <div className="loadingOverlay">
-          Mencari dojo di lokasi ini...
-        </div>
-      )}
+      {isLoading && <div className="loadingOverlay">Mencari dojo di lokasi ini...</div>}
     </div>
   )
 }

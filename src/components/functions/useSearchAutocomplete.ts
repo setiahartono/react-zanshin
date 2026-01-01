@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export type Suggestion = {
   place_id: number
@@ -12,6 +12,12 @@ export function useSearchAutocomplete(onSearch: (query: string) => void) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
+  const onSearchRef = useRef(onSearch)
+
+  useEffect(() => {
+    onSearchRef.current = onSearch
+  }, [onSearch])
+
   useEffect(() => {
     if (inputValue.length < 3) {
       setSuggestions([])
@@ -22,7 +28,9 @@ export function useSearchAutocomplete(onSearch: (query: string) => void) {
     const fetchSuggestions = async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(inputValue)}&limit=5&countrycodes=id`
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            inputValue
+          )}&limit=5&countrycodes=id`
         )
         const data: Suggestion[] = await response.json()
         setSuggestions(data)
@@ -44,13 +52,13 @@ export function useSearchAutocomplete(onSearch: (query: string) => void) {
   const handleSuggestionClick = (suggestion: Suggestion) => {
     setInputValue(suggestion.display_name)
     setShowSuggestions(false)
-    onSearch(suggestion.display_name)
+    onSearchRef.current(suggestion.display_name)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setShowSuggestions(false)
-      onSearch(inputValue)
+      onSearchRef.current(inputValue)
     }
   }
 
