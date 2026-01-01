@@ -1,0 +1,70 @@
+import { useEffect, useRef } from 'react'
+import L from 'leaflet'
+import type { Dojo } from '../api/dojos'
+
+type Props = {
+  dojos: Dojo[]
+  onLocationSelect: (lat: number, lng: number) => void
+}
+
+export default function MapView({ dojos, onLocationSelect }: Props) {
+  const mapRef = useRef<L.Map | null>(null)
+  const markersRef = useRef<L.Marker[]>([])
+  const userMarkerRef = useRef<L.Marker | null>(null)
+
+  // Initialize map ONCE
+  useEffect(() => {
+    if (mapRef.current) return
+
+    const map = L.map('map').setView([-6.2, 106.8], 15)
+    mapRef.current = map
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map)
+
+    // Try to set map to user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords
+          map.setView([latitude, longitude], 15)
+        },
+        (error) => {
+          console.warn('Unable to get user location:', error.message)
+        }
+      )
+    }
+
+    map.on('click', (e) => {
+      const { lat, lng } = e.latlng
+      onLocationSelect(lat, lng)
+
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove()
+      }
+
+      userMarkerRef.current = L.marker([lat, lng]).addTo(map)
+        .bindPopup('Lokasi Pencarian Anda')
+        .openPopup()
+    })
+  }, [])
+
+  // Update dojo markers
+  useEffect(() => {
+    if (!mapRef.current) return
+
+    markersRef.current.forEach(m => m.remove())
+    markersRef.current = []
+
+    dojos.forEach(dojo => {
+      const marker = L.marker([dojo.lat, dojo.lng])
+        .addTo(mapRef.current!)
+        .bindPopup(`<b>${dojo.title}</b>`)
+
+      markersRef.current.push(marker)
+    })
+  }, [dojos])
+
+  return <div id="map" style={{ height: '100%' }} />
+}
