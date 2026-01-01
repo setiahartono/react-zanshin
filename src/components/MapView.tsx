@@ -96,7 +96,7 @@ export default function MapView({
       .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
       .openPopup()
 
-    mapRef.current.setView([searchLocation.lat, searchLocation.lng], 15)
+    mapRef.current.setView([searchLocation.lat, searchLocation.lng])
   }, [searchLocation])
 
   // Update popup when loading state changes
