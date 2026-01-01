@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import type { Dojo } from '../api/dojos'
+import './css/MapView.css'
 
 type Props = {
   dojos: Dojo[]
   onLocationSelect: (lat: number, lng: number) => void
+  searchLocation: { lat: number; lng: number } | null
+  isLoading: boolean
 }
 
-export default function MapView({ dojos, onLocationSelect }: Props) {
+export default function MapView({ dojos, onLocationSelect, searchLocation, isLoading }: Props) {
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<L.Marker[]>([])
   const userMarkerRef = useRef<L.Marker | null>(null)
@@ -37,6 +40,8 @@ export default function MapView({ dojos, onLocationSelect }: Props) {
     }
 
     map.on('click', (e) => {
+      if (isLoading) return
+
       const { lat, lng } = e.latlng
       onLocationSelect(lat, lng)
 
@@ -45,7 +50,7 @@ export default function MapView({ dojos, onLocationSelect }: Props) {
       }
 
       userMarkerRef.current = L.marker([lat, lng]).addTo(map)
-        .bindPopup('Lokasi Pencarian Anda')
+        .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
         .openPopup()
     })
   }, [])
@@ -66,5 +71,37 @@ export default function MapView({ dojos, onLocationSelect }: Props) {
     })
   }, [dojos])
 
-  return <div id="map" style={{ height: '100%' }} />
+  // Handle search location
+  useEffect(() => {
+    if (!mapRef.current || !searchLocation) return
+
+    if (userMarkerRef.current) {
+      userMarkerRef.current.remove()
+    }
+
+    userMarkerRef.current = L.marker([searchLocation.lat, searchLocation.lng])
+      .addTo(mapRef.current)
+      .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
+      .openPopup()
+
+    mapRef.current.setView([searchLocation.lat, searchLocation.lng], 15)
+  }, [searchLocation])
+
+  // Update popup when loading state changes
+  useEffect(() => {
+    if (userMarkerRef.current) {
+      userMarkerRef.current.setPopupContent(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
+    }
+  }, [isLoading])
+
+  return (
+    <div className="mapContainer">
+      <div id="map" className="mapElement" />
+      {isLoading && (
+        <div className="loadingOverlay">
+          Mencari dojo di lokasi ini...
+        </div>
+      )}
+    </div>
+  )
 }

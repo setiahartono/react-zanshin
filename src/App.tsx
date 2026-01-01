@@ -10,10 +10,28 @@ import Sidebar from './components/Sidebar'
 export default function App() {
   const [dojos, setDojos] = useState<Dojo[]>([])
   const [distance, setDistance] = useState(10)
+  const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleLocationSelect(lat: number, lng: number) {
+    setIsLoading(true)
     const results = await fetchNearbyDojos(lat, lng, distance)
     setDojos(results)
+    setSearchLocation({ lat, lng })
+    setIsLoading(false)
+  }
+
+  async function handleSearch(query: string) {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
+      const data = await response.json()
+      if (data.length > 0) {
+        const { lat, lon } = data[0]
+        handleLocationSelect(+lat, +lon)
+      }
+    } catch (error) {
+      console.error('Error geocoding:', error)
+    }
   }
 
   return (
@@ -21,6 +39,8 @@ export default function App() {
       <SearchBox
         distance={distance}
         onDistanceChange={setDistance}
+        onSearch={handleSearch}
+        isLoading={isLoading}
       />
 
       <div className="content">
@@ -28,6 +48,8 @@ export default function App() {
           <MapView
             dojos={dojos}
             onLocationSelect={handleLocationSelect}
+            searchLocation={searchLocation}
+            isLoading={isLoading}
           />
         </div>
 

@@ -1,73 +1,94 @@
-# React + TypeScript + Vite
+# React Zanshin - Dojo Finder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React application for discovering and exploring martial arts dojos on an interactive map. Built with TypeScript, Vite, and Leaflet, this app helps users find nearby dojos and get directions.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Interactive Map**: View dojo locations on a responsive Leaflet-powered map
+- **Automatic Location Detection**: Automatically centers the map on your current location (with permission)
+- **Nearest Dojo Finder**: Automatically identifies and highlights the closest dojo to your location
+- **Search Functionality**: Search for dojos by location or criteria
+- **Click to Explore**: Click anywhere on the map to search for dojos in that area
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Mapping**: Leaflet with OpenStreetMap tiles
+- **Styling**: CSS modules
+- **Linting**: ESLint with TypeScript support
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/react-zanshin.git
+   cd react-zanshin
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Running the Application
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Development Mode
+Start the development server with hot reload:
+```bash
+npm run dev
+```
+The app will be available at `http://localhost:5173`
+
+### Build for Production
+Create an optimized production build:
+```bash
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Preview Production Build
+Serve the production build locally:
+```bash
+npm run preview
 ```
+
+### Linting
+Check for code quality issues:
+```bash
+npm run lint
+```
+
+## Usage
+
+1. **Grant Location Permission**: When prompted, allow the app to access your location for automatic map centering
+2. **Explore the Map**: The map will show all available dojos as markers
+3. **Find Nearest Dojo**: Your location marker will appear, and the nearest dojo's popup will open automatically
+4. **Search**: Use the search bar to find specific dojos or locations
+5. **Click to Search**: Click anywhere on the map to search for dojos in that area
+
+## Project Structure
+
+```
+src/
+├── api/
+│   └── dojos.ts          # Dojo data and types
+├── components/
+│   ├── MapView.tsx       # Main map component with Leaflet integration
+│   ├── SearchBar.tsx     # Search functionality
+│   └── Sidebar.tsx       # Additional information panel
+├── assets/               # Static assets
+└── main.tsx             # App entry point
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and commit: `git commit -am 'Add new feature'`
+4. Push to the branch: `git push origin feature-name`
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
