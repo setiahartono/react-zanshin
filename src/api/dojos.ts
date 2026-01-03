@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://0.0.0.0:8080/api/v1/nearby_dojos'
+const FETCH_DOJO_URL = import.meta.env.VITE_FETCH_DOJO_URL
 
 export type Dojo = {
   lat: number
@@ -14,7 +14,7 @@ export async function fetchNearbyDojos(
 ): Promise<Dojo[]> {
   if (distance > 20) distance = 20
 
-  const res = await fetch(BACKEND_URL, {
+  const res = await fetch(FETCH_DOJO_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
