@@ -9,7 +9,7 @@ import Sidebar from './components/Sidebar'
 
 export default function App() {
   const [dojos, setDojos] = useState<Dojo[]>([])
-  const [distance, setDistance] = useState(10)
+  const [distance, setDistance] = useState(5)
   const [searchLocation, setSearchLocation] =
     useState<{ lat: number; lng: number } | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -73,12 +73,13 @@ export default function App() {
         </div>
 
         <div className="sidebar">
-          <h2>Hasil Pencarian  dalam jarak {distance} Km</h2>
           <Sidebar
             dojos={dojos}
             onCenterDojo={
               (dojo) => setFocusedDojo(dojo)
             }
+            distance={distance}
+            searchLocation={searchLocation}
           />
         </div>
       </div>

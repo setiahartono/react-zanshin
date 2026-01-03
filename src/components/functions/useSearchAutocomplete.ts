@@ -13,12 +13,18 @@ export function useSearchAutocomplete(onSearch: (query: string) => void) {
   const [showSuggestions, setShowSuggestions] = useState(false)
 
   const onSearchRef = useRef(onSearch)
+  const isSelectingRef = useRef(false)
 
   useEffect(() => {
     onSearchRef.current = onSearch
   }, [onSearch])
 
   useEffect(() => {
+    if (isSelectingRef.current) {
+      isSelectingRef.current = false
+      return
+    }
+
     if (inputValue.length < 3) {
       setSuggestions([])
       setShowSuggestions(false)
@@ -50,6 +56,7 @@ export function useSearchAutocomplete(onSearch: (query: string) => void) {
   }
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
+    isSelectingRef.current = true
     setInputValue(suggestion.display_name)
     setShowSuggestions(false)
     onSearchRef.current(suggestion.display_name)

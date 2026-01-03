@@ -58,7 +58,7 @@ export default function SearchBox({
           type="number"
           value={distance}
           min={1}
-          max={20}
+          max={15}
           onChange={(e) => onDistanceChange(+e.target.value)}
           disabled={isLoading}
           className="distanceInput"
