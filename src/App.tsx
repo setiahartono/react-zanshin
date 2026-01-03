@@ -13,6 +13,7 @@ export default function App() {
   const [searchLocation, setSearchLocation] =
     useState<{ lat: number; lng: number } | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [focusedDojo, setFocusedDojo] = useState<Dojo | null>(null)
 
   // Always pass the distance explicitly
   async function handleLocationSelect(
@@ -62,6 +63,7 @@ export default function App() {
           <MapView
             dojos={dojos}
             searchLocation={searchLocation}
+            focusedDojo={focusedDojo}
             isLoading={isLoading}
             onLocationSelect={(lat, lng) =>
               handleLocationSelect(lat, lng, distance)
@@ -73,6 +75,9 @@ export default function App() {
           <h2>Hasil Pencarian</h2>
           <Sidebar
             dojos={dojos}
+            onCenterDojo={
+              (dojo) => setFocusedDojo(dojo)
+            }
           />
         </div>
       </div>

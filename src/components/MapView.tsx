@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import L from 'leaflet'
+import L, { map } from 'leaflet'
 import type { Dojo } from '../api/dojos'
 import { centerPosition, setUserMarker } from './functions/userMarker'
 import './css/MapView.css'
@@ -8,6 +8,7 @@ type Props = {
   dojos: Dojo[]
   onLocationSelect: (lat: number, lng: number) => void
   searchLocation: { lat: number; lng: number } | null
+  focusedDojo: Dojo | null
   isLoading: boolean
 }
 
@@ -15,6 +16,7 @@ export default function MapView({
   dojos,
   onLocationSelect,
   searchLocation,
+  focusedDojo,
   isLoading
 }: Props) {
   const mapRef = useRef<L.Map | null>(null)
@@ -50,6 +52,7 @@ export default function MapView({
       )
     }
 
+    // Handle map clicks
     map.on('click', (e) => {
       if (isLoading) return
 
@@ -111,8 +114,29 @@ export default function MapView({
       isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
     )
 
-    centerPosition(mapRef.current, searchLocation)
+    centerPosition(mapRef.current,  searchLocation.lat, searchLocation.lng)
   }, [isLoading])
+
+  // Handle focused dojo change
+  useEffect(() => {
+    if (!mapRef.current || !focusedDojo) return
+
+    const index = dojos.findIndex(
+      (d) => d.lat === focusedDojo.lat && d.lng === focusedDojo.lng
+    )
+
+    if (index === -1) return
+
+    const marker = markersRef.current[index]
+    if (!marker) return
+
+    mapRef.current.setView(
+      [focusedDojo.lat, focusedDojo.lng],
+      Math.max(mapRef.current.getZoom(), 16)
+    )
+
+    marker.openPopup()
+  }, [focusedDojo, dojos])
 
   return (
     <div className="mapContainer">

@@ -25,7 +25,8 @@ export function setUserMarker(
 
 export function centerPosition(
   map: L.Map,
-  location: LatLng,
+  lat: number,
+  lng: number
 ) {
-  map.setView([location.lat, location.lng, map.getZoom()])
+  map.setView([lat, lng, map.getZoom()])
 }

@@ -1,6 +1,7 @@
 const FETCH_DOJO_URL = import.meta.env.VITE_FETCH_DOJO_URL
 
 export type Dojo = {
+  id: string
   lat: number
   lng: number
   title: string

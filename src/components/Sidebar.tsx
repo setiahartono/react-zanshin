@@ -3,9 +3,10 @@ import './css/Sidebar.css'
 
 type Props = {
   dojos: Dojo[]
+  onCenterDojo: (dojo: Dojo) => void
 }
 
-export default function Sidebar({ dojos }: Props) {
+export default function Sidebar({ dojos, onCenterDojo }: Props) {
   if (dojos.length === 0) {
     return <p>Tidak ada dojo dalam jarak yang ditentukan.</p>
   }
@@ -20,7 +21,7 @@ export default function Sidebar({ dojos }: Props) {
 
           <div className="dojo-actions">
             <p>
-              <button type="button" onClick={() => alert('TEST')}>
+              <button type="button" onClick={() => onCenterDojo(dojo)}>
                 Tampilkan di Peta
               </button>
             </p>
