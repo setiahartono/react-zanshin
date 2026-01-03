@@ -21,6 +21,7 @@ export default function App() {
     lng: number,
     selectedDistance: number
   ) {
+    setFocusedDojo(null)
     setIsLoading(true)
     try {
       const results = await fetchNearbyDojos(lat, lng, selectedDistance)
