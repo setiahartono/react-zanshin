@@ -71,7 +71,9 @@ export default function App() {
 
         <div className="sidebar">
           <h2>Hasil Pencarian</h2>
-          <Sidebar dojos={dojos} />
+          <Sidebar
+            dojos={dojos}
+          />
         </div>
       </div>
     </div>

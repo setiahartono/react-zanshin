@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import type { Dojo } from '../api/dojos'
+import { centerPosition, setUserMarker } from './functions/userMarker'
 import './css/MapView.css'
 
 type Props = {
@@ -20,6 +21,7 @@ export default function MapView({
   const markersRef = useRef<L.Marker[]>([])
   const userMarkerRef = useRef<L.Marker | null>(null)
 
+  // Always keep latest callback (avoids stale closure)
   const onLocationSelectRef = useRef(onLocationSelect)
   useEffect(() => {
     onLocationSelectRef.current = onLocationSelect
@@ -36,15 +38,14 @@ export default function MapView({
       attribution: '© OpenStreetMap contributors'
     }).addTo(map)
 
-    // Try to set map to user location
+    // Try to center map on user's location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords
-          map.setView([latitude, longitude], 15)
+        ({ coords }) => {
+          map.setView([coords.latitude, coords.longitude], 15)
         },
-        (error) => {
-          console.warn('Unable to get user location:', error.message)
+        (err) => {
+          console.warn('Unable to get user location:', err.message)
         }
       )
     }
@@ -54,24 +55,23 @@ export default function MapView({
 
       const { lat, lng } = e.latlng
 
-      // ✅ use the ref to get the latest distance-aware callback
       onLocationSelectRef.current(lat, lng)
 
-      if (userMarkerRef.current) {
-        userMarkerRef.current.remove()
-      }
-
-      userMarkerRef.current = L.marker([lat, lng])
-        .addTo(map)
-        .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
-        .openPopup()
+      setUserMarker(
+        map,
+        userMarkerRef,
+        { lat, lng },
+        isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
+      )
+      
     })
   }, [isLoading])
 
+  // Render dojo markers
   useEffect(() => {
     if (!mapRef.current) return
 
-    markersRef.current.forEach((m) => m.remove())
+    markersRef.current.forEach((marker) => marker.remove())
     markersRef.current = []
 
     dojos.forEach((dojo) => {
@@ -83,35 +83,45 @@ export default function MapView({
     })
   }, [dojos])
 
-  // Handle search location
+  // Handle search location change
   useEffect(() => {
     if (!mapRef.current || !searchLocation) return
 
-    if (userMarkerRef.current) {
-      userMarkerRef.current.remove()
-    }
+    setUserMarker(
+      mapRef.current,
+      userMarkerRef,
+      searchLocation,
+      isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
+    )
 
-    userMarkerRef.current = L.marker([searchLocation.lat, searchLocation.lng])
-      .addTo(mapRef.current)
-      .bindPopup(isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda')
-      .openPopup()
-
-    mapRef.current.setView([searchLocation.lat, searchLocation.lng])
+    mapRef.current.setView(
+      [searchLocation.lat, searchLocation.lng],
+      mapRef.current.getZoom()
+    )
   }, [searchLocation])
 
-  // Update popup when loading state changes
+  // Update user marker when loading state changes
   useEffect(() => {
-    if (userMarkerRef.current) {
-      userMarkerRef.current.setPopupContent(
-        isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
-      )
-    }
+    if (!mapRef.current || !searchLocation) return
+
+    setUserMarker(
+      mapRef.current,
+      userMarkerRef,
+      searchLocation,
+      isLoading ? 'Sedang memuat...' : 'Lokasi Pencarian Anda'
+    )
+
+    centerPosition(mapRef.current, searchLocation)
   }, [isLoading])
 
   return (
     <div className="mapContainer">
       <div id="map" className="mapElement" />
-      {isLoading && <div className="loadingOverlay">Mencari dojo di lokasi ini...</div>}
+      {isLoading && (
+        <div className="loadingOverlay">
+          Mencari dojo di lokasi ini...
+        </div>
+      )}
     </div>
   )
 }

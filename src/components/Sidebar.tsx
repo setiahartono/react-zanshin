@@ -15,15 +15,26 @@ export default function Sidebar({ dojos }: Props) {
       {dojos.map((dojo, i) => (
         <li key={i} className="dojo-card">
           <h3>{dojo.title}</h3>
+
           {dojo.description && <p>{dojo.description}</p>}
-          <p>
-            <a
-              href={`https://google.com/maps?q=${dojo.lat},${dojo.lng}`}
-              target="_blank"
-            >
-              Link to Google Map
-            </a>
-          </p>
+
+          <div className="dojo-actions">
+            <p>
+              <button type="button" onClick={() => alert('TEST')}>
+                Tampilkan di Peta
+              </button>
+            </p>
+
+            <p>
+              <a
+                href={`https://google.com/maps?q=${dojo.lat},${dojo.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google Maps
+              </a>
+            </p>
+          </div>
         </li>
       ))}
     </ul>
