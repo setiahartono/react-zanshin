@@ -1,4 +1,5 @@
 import type { Dojo } from '../api/dojos'
+import './css/Sidebar.css'
 
 type Props = {
   dojos: Dojo[]
@@ -10,7 +11,7 @@ export default function Sidebar({ dojos }: Props) {
   }
 
   return (
-    <ul id="dojo-list">
+    <ul className="dojo-list">
       {dojos.map((dojo, i) => (
         <li key={i} className="dojo-card">
           <h3>{dojo.title}</h3>

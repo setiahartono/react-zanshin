@@ -63,6 +63,7 @@ export default function SearchBox({
           disabled={isLoading}
           className="distanceInput"
         />
+        <span className="distanceUnit">KM</span>
       </div>
     </div>
   )

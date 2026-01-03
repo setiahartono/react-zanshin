@@ -30,6 +30,13 @@
   border-radius: 4px;
 }
 
+.distanceUnit {
+  /* font-size: 1vh; */
+  padding: 1vh 1.5vh;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
 .distanceInput:disabled {
   background-color: #f5f5f5;
   cursor: not-allowed;

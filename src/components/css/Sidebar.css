@@ -1,0 +1,64 @@
+.sidebar {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-left: 1px solid #dee2e6;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.dojo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.dojo-card {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dojo-card h3 {
+  margin: 0 0 10px 0;
+  /* color: #007bff; */
+}
+
+.dojo-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.dojo-card a {
+  /* color: #007bff; */
+  text-decoration: none;
+}
+
+.dojo-card a:hover {
+  text-decoration: underline;
+}
+
+.center-button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.center-button:hover {
+  background-color: #218838;
+}
+
+.center-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
