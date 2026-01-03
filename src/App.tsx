@@ -73,7 +73,7 @@ export default function App() {
         </div>
 
         <div className="sidebar">
-          <h2>Hasil Pencarian</h2>
+          <h2>Hasil Pencarian  dalam jarak {distance} Km</h2>
           <Sidebar
             dojos={dojos}
             onCenterDojo={

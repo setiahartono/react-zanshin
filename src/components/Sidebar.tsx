@@ -8,14 +8,14 @@ type Props = {
 
 export default function Sidebar({ dojos, onCenterDojo }: Props) {
   if (dojos.length === 0) {
-    return <p>Tidak ada dojo dalam jarak yang ditentukan.</p>
+    return <p>Klik di peta atau masukkan alamat untuk mencari dojo.</p>
   }
 
   return (
     <ul className="dojo-list">
       {dojos.map((dojo, i) => (
         <li key={i} className="dojo-card">
-          <h3>{dojo.title}</h3>
+          <h3>{dojo.title} ({dojo.distance_from_search} Km)</h3>
 
           {dojo.description && <p>{dojo.description}</p>}
 

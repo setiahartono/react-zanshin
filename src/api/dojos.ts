@@ -6,6 +6,7 @@ export type Dojo = {
   lng: number
   title: string
   description?: string
+  distance_from_search?: number
 }
 
 export async function fetchNearbyDojos(
